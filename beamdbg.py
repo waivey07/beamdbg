@@ -9,12 +9,12 @@ input_file = sys.argv[2]
 output_file = sys.argv[3]
 
 try:
-    log.printInfo(f"reading code file \"{code_file}\"...")
+    log.printInfo(f"Loading code file \"{code_file}\"...")
     with open(code_file, "r") as f:
         code = f.read()
-    log.printInfo(f"successfully readed code file \"{code_file}\"")
+    log.printInfo(f"Code file successfully loaded \"{code_file}\"")
 except FileNotFoundError:
-    log.printError(f"Cannot found code file \"{code_file}\"", 2)
+    log.printError(f"Code file not found \"{code_file}\"", 2)
 
 try:
     log.printInfo(f"reading input file \"{input_file}\"...")
