@@ -35,6 +35,7 @@ for c in code:
     if c not in readable_chars:
         log.printWarning(f"Found unreadable char \033[31m{c}\033[0m in code, it will be ignored.")
 
+prefix = "beamdbg> "
 x = 0
 y = 0
 memory = [0 for _ in range(256)]
@@ -50,3 +51,13 @@ splitted_code = code.split("\n")
 height = len(splitted_code)
 width = max([len(l) for l in splitted_code])
 # print(height, width)
+
+def show_code(x = None, y = None):
+    if x == None and y == None:
+        print(code)
+
+log.printInfo(f"Code height: {height}")
+log.printInfo(f"Code width: {width}")
+log.printInfo(f"For help, type \"help\".")
+while True:
+    cmd = input(prefix)
