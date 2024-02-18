@@ -34,3 +34,19 @@ readable_chars = "><^v+-@:/\\!?|_HSLsgPpun`')(r\n "
 for c in code:
     if c not in readable_chars:
         log.printWarning(f"Found unreadable char \033[31m{c}\033[0m in code, it will be ignored.")
+
+x = 0
+y = 0
+memory = [0 for _ in range(256)]
+beam = 0
+store = 0
+RIGHT = 0
+LEFT = 1
+UP = 2
+DOWN = 3
+direction = RIGHT
+splitted_code = code.split("\n")
+# print(splitted_code)
+height = len(splitted_code)
+width = max([len(l) for l in splitted_code])
+# print(height, width)
