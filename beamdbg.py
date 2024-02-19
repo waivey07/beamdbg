@@ -1,5 +1,6 @@
 import sys
 import logmaster as log
+import help
 
 version = "0.0.0"
 log.printInfo("Beamdbg v" + version)
@@ -36,21 +37,9 @@ for c in code:
         log.printWarning(f"Found unreadable char \033[31m{c}\033[0m in code, it will be ignored.")
 
 prefix = "beamdbg> "
-x = 0
-y = 0
-memory = [0 for _ in range(256)]
-beam = 0
-store = 0
-RIGHT = 0
-LEFT = 1
-UP = 2
-DOWN = 3
-direction = RIGHT
 splitted_code = code.split("\n")
-# print(splitted_code)
 height = len(splitted_code)
 width = max([len(l) for l in splitted_code])
-# print(height, width)
 
 def show_code(x = None, y = None):
     if x == None and y == None:
@@ -58,6 +47,10 @@ def show_code(x = None, y = None):
 
 log.printInfo(f"Code height: {height}")
 log.printInfo(f"Code width: {width}")
-log.printInfo(f"For help, type \"help\".")
+log.printInfo("For help, type \"help\".")
 while True:
     cmd = input(prefix)
+    if cmd == "help":
+        print(help.help_msg)
+        continue
+    
