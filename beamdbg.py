@@ -49,7 +49,10 @@ log.printInfo(f"Code height: {height}")
 log.printInfo(f"Code width: {width}")
 log.printInfo("For help, type \"help\".")
 while True:
-    cmd = input(prefix)
+    cmd = input(prefix).split(" ")
+    if len(cmd) > 1:
+        param = cmd[1:]
+    cmd = cmd[0]
     if cmd == "help":
         print(help.help_msg)
     elif cmd == "b":
@@ -58,5 +61,7 @@ while True:
         continue
     elif cmd == "start":
         continue
+    elif cmd == "exit" or cmd == "quit":
+        exit(0)
     else:
         log.printInfo("Unknown command. type \"help\" for help.")

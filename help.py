@@ -7,4 +7,5 @@ COMMANDS
 help - shows this message
 start - start the process
 ni - next instruction
+b - set breakpoint
 """
