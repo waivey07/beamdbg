@@ -52,5 +52,11 @@ while True:
     cmd = input(prefix)
     if cmd == "help":
         print(help.help_msg)
+    elif cmd == "b":
         continue
-    
+    elif cmd == "ni":
+        continue
+    elif cmd == "start":
+        continue
+    else:
+        log.printInfo("Unknown command. type \"help\" for help.")
