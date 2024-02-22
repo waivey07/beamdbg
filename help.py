@@ -5,9 +5,11 @@ About esolang Beam: https://esolangs.org/wiki/Beam
 
 <COMMANDS>
 
-help - shows this message
-start - start the process
-ni - next instruction
-run - run process until exit
-b - set breakpoint
+help - Shows this message
+start - Start the process
+stop - Stop the process
+ni <steps> - Executes the next instruction a specified number of times, default=1
+run - Run process until exit
+b - Set breakpoint
+exit - Exit program
 """
