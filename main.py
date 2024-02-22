@@ -19,11 +19,17 @@ def show_code(x=None, y=None):
         print(code[y][x])
         return code[y][x]
 
+def check_memory(memory):
+    idx=[]
+    for i in memory:
+        if memory!=-1:
+            idx.append(i)
+    return idx
+
 RIGHT = 0
 LEFT = 1
 UP = 2
 DOWN = 3
-
 class Process:
     def __init__(self, code, input, height, width):
         self.index_x = 0
@@ -150,15 +156,18 @@ class Process:
             if self.store != 0:
                 self.current_direction = RIGHT
         elif c == "r":
-            self.beam = self.input[self.input_idx]
+            self.beam = ord(self.input[self.input_idx])
+            if self.beam == 10: self.beam = 0
             self.input_idx += 1
 
     def ni(self, count):
         for i in range(count):
+            print(f"Current index : {self.index_x}, {self.index_y}")
+            print(f"Current value of 'Beam' : {self.beam}")
+            print(f"Current value of 'Store' : {self.store}")
+            self.interpret(self.code[self.index_y][self.index_x])
             if self.halted:
                 return self.reason
-            print(self.index_x, self.index_y)
-            self.interpret(self.code[self.index_y][self.index_x])
             if self.current_direction == RIGHT:
                 self.index_x += 1
                 if self.index_x >= self.width:
@@ -265,6 +274,8 @@ while True:
                 log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
                 p = None
                 break
+    elif cmd == "stop":
+        p=None
     elif cmd == "exit" or cmd == "quit":
         exit(0)
     else:
