@@ -52,23 +52,142 @@ log.printInfo(f"Code height: {height}")
 log.printInfo(f"Code width: {width}")
 log.printInfo("For help, type \"help\".")
 
+RIGHT = 0
+LEFT = 1
+UP = 2
+DOWN = 3
 class Process:
-    def __init__(self):
+    def __init__(self, code, input, height, width):
         self.index_x = 0
         self.index_y = 0
-        self.current_direction = {
-            ">": "R",
-            "<": "L",
-            "^": "U",
-            "v": "D"
-        }
+        # self.current_direction = {
+        #     ">": "R",
+        #     "<": "L",
+        #     "^": "U",
+        #     "v": "D"
+        # }
+        self.current_direction = RIGHT
         self.beam = 0
         self.store = 0
         self.memory = [0 for _ in range(256)]
-    
+        self.code = code
+        self.input = input
+        self.input_idx = 0
+        self.height = height
+        self.width = width
+        self.halted = False
+        self.reason = ""
+    def interpret(self, c):
+        if self.halted:
+            return self.reason
+        if c == ">":
+            self.current_direction = RIGHT
+        elif c == "<":
+            self.current_direction = LEFT
+        elif c == "^":
+            self.current_direction = UP
+        elif c == "v":
+            self.current_direction = DOWN
+        elif c == "+":
+            self.beam += 1
+        elif c == "-":
+            self.beam -= 1
+        elif c == "@":
+            sys.stdout.write(chr(self.beam))
+        elif c == ":":
+            sys.stdout.write(str(self.beam))
+        elif c == "/":
+            if self.current_direction == RIGHT: self.current_direction = UP
+            elif self.current_direction == LEFT: self.current_direction = DOWN
+            elif self.current_direction == UP: self.current_direction = RIGHT
+            elif self.current_direction == DOWN: self.current_direction = LEFT
+        elif c == "\\":
+            if self.current_direction == RIGHT: self.current_direction = DOWN
+            elif self.current_direction == LEFT: self.current_direction = UP
+            elif self.current_direction == UP: self.current_direction = LEFT
+            elif self.current_direction == DOWN: self.current_direction = RIGHT
+        elif c == "!":
+            if self.beam != 0:
+                if self.current_direction == RIGHT: self.current_direction = LEFT
+                elif self.current_direction == LEFT: self.current_direction = RIGHT
+                elif self.current_direction == UP: self.current_direction = DOWN
+                elif self.current_direction == DOWN: self.current_direction = UP
+        elif c == "?":
+            if self.beam == 0:
+                if self.current_direction == RIGHT: self.current_direction = LEFT
+                elif self.current_direction == LEFT: self.current_direction = RIGHT
+                elif self.current_direction == UP: self.current_direction = DOWN
+                elif self.current_direction == DOWN: self.current_direction = UP
+        elif c == "|":
+            if self.current_direction == RIGHT: self.current_direction = LEFT
+            elif self.current_direction == LEFT: self.current_direction = RIGHT
+        elif c == "_":
+            if self.current_direction == UP: self.current_direction = DOWN
+            elif self.current_direction == DOWN: self.current_direction = UP
+        elif c == "H":
+            self.halted = True
+            self.reason = "OK"
+        elif c == "S":
+            self.store = self.beam
+        elif c == "L":
+            self.beam = self.store
+        elif c == "s":
+            self.memory[self.beam] = self.store
+        elif c == "g":
+            self.store = self.memory[self.beam]
+        elif c == "P":
+            self.memory[self.store] = self.beam
+        elif c == "p":
+            self.beam = self.memory[self.store]
+        elif c == "u":
+            if self.beam != self.store: self.current_direction = UP
+        elif c == "n":
+            if self.beam != self.store: self.current_direction = DOWN
+        elif c == "`":
+            self.store -= 1
+        elif c == "'":
+            self.store += 1
+        elif c == ")":
+            if self.store != 0: self.current_direction = LEFT
+        elif c == "(":
+            if self.store != 0: self.current_direction = RIGHT
+        elif c == "r":
+            self.beam = self.input[self.input_idx]
+            self.input_idx += 1
+    def ni(self):
+        if self.halted:
+            return self.reason
+        print(self.index_x, self.index_y)
+        self.interpret(self.code[self.index_y][self.index_x])
+        if self.current_direction == RIGHT:
+            self.index_x += 1
+            if self.index_x >= self.width:
+                self.halted = True
+                self.reason = "Beam was out of range"
+        elif self.current_direction == LEFT:
+            self.index_x -= 1
+            if self.index_x < 0:
+                self.halted = True
+                self.reason = "Beam was out of range"
+        elif self.current_direction == UP:
+            self.index_y -= 1
+            if self.index_y < 0:
+                self.halted = True
+                self.reason = "Beam was out of range"
+        elif self.current_direction == DOWN:
+            self.index_y += 1
+            if self.index_y >= self.height:
+                self.halted = True
+                self.reason = "Beam was out of range"
+        
 
 while True:
-    cmd = input(prefix).split(" ")
+    cmd = input(prefix)
+    if cmd == "":
+        cmd = prev
+    else:
+        prev = cmd
+    cmd = cmd.split(" ")
     if len(cmd) > 1:
         param = cmd[1:]
     cmd = cmd[0]
@@ -77,9 +196,9 @@ while True:
     elif cmd == "b":
         continue
     elif cmd == "ni":
-        continue
+        p.ni()
     elif cmd == "start":
-        p=Process()
+        p=Process(splitted_code, inp, height, width)
     elif cmd == "exit" or cmd == "quit":
         exit(0)
     else:
