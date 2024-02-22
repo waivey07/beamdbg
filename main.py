@@ -44,10 +44,29 @@ width = max([len(l) for l in splitted_code])
 def show_code(x = None, y = None):
     if x == None and y == None:
         print(code)
+    else:
+        print(code[y][x])
+        return code[y][x]
 
 log.printInfo(f"Code height: {height}")
 log.printInfo(f"Code width: {width}")
 log.printInfo("For help, type \"help\".")
+
+class Process:
+    def __init__(self):
+        self.index_x = 0
+        self.index_y = 0
+        self.current_direction = {
+            ">": "R",
+            "<": "L",
+            "^": "U",
+            "v": "D"
+        }
+        self.beam = 0
+        self.store = 0
+        self.memory = [0 for _ in range(256)]
+    
+
 while True:
     cmd = input(prefix).split(" ")
     if len(cmd) > 1:
@@ -60,7 +79,7 @@ while True:
     elif cmd == "ni":
         continue
     elif cmd == "start":
-        continue
+        p=Process()
     elif cmd == "exit" or cmd == "quit":
         exit(0)
     else:

@@ -3,3 +3,6 @@ input
 output
 __pycache__/
 venv/
+code.txt
+input.txt
+output.txt
