@@ -8,5 +8,6 @@ About esolang Beam: https://esolangs.org/wiki/Beam
 help - shows this message
 start - start the process
 ni - next instruction
+run - run process until exit
 b - set breakpoint
 """

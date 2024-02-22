@@ -1,11 +1,12 @@
+from colormaster import set_color
 def printInfo(msg: str):
-    print("[\033[34m*\033[0m] " + msg)
+    print(f"[{set_color('blue')}*{set_color(0)}] " + msg)
 
 
 def printWarning(msg: str):
-    print("[\033[33m!\033[0m] " + msg)
+    print(f"[{set_color('yellow')}!{set_color(0)}] " + msg)
 
 
 def printError(msg: str, exitcode: int):
-    print("[\033[31mX\033[0m] " + msg)
+    print(f"[{set_color('red')}X{set_color(0)}] " + msg)
     exit(exitcode)

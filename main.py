@@ -1,6 +1,7 @@
 import sys
 import logmaster as log
 import help
+from colormaster import set_color
 
 version = "24.02.22"
 log.printInfo("Beamdbg v" + version)
@@ -57,14 +58,14 @@ class Process:
             self.beam -= 1
         elif c == "@":
             # sys.stdout.write(chr(self.beam))
-            print("Received output :", chr(self.beam))
+            log.printInfo(f"Received output : {chr(self.beam)}")
             output_fp = open(output_file, "a")
             output_fp.write(chr(self.beam))
             output_fp.close()
             self.output += chr(self.beam)
         elif c == ":":
             # sys.stdout.write(str(self.beam))
-            print("Received output :", str(self.beam))
+            log.printInfo(f"Received output : {str(self.beam)}")
             output_fp = open(output_file, "a")
             output_fp.write(str(self.beam))
             output_fp.close()
@@ -184,9 +185,9 @@ p = None
 
 while True:
     if p:
-        prefix = "\033[92mbeamdbg> \033[0m"
+        prefix = f"{set_color('green', 1)}beamdbg> {set_color(0)}"
     else:
-        prefix = "\033[91mbeamdbg> \033[0m"
+        prefix = f"{set_color('red', 1)}beamdbg> {set_color(0)}"
     cmd = input(prefix)
     if cmd == "":
         cmd = prev
@@ -209,13 +210,13 @@ while True:
         if not param:
             reason = p.ni(1)
             if reason:
-                log.printInfo(f"Process exited with reason: {reason}")
+                log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
                 p = None
         else:
             try:
                 reason = p.ni(int(param[0]))
                 if reason:
-                    log.printInfo(f"Process exited with reason: {reason}")
+                    log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
                     p = None
             except ValueError:
                 log.printWarning("ValueError")
@@ -226,25 +227,25 @@ while True:
         log.printInfo("Starting to debug...")
         readable_chars = "><^v+-@:/\\!?|_HSLsgPpun`')(r\n "
         try:
-            log.printInfo(f"Loading code file \033[34m{code_file}\033[0m...")
+            log.printInfo(f"Loading code file {set_color('blue')}{code_file}{set_color(0)}...")
             with open(code_file, "r") as f:
                 code = f.read()
-            log.printInfo(f"Code file successfully loaded \033[34m{code_file}\033[0m")
+            log.printInfo(f"Code file successfully loaded {set_color('blue')}{code_file}{set_color(0)}")
         except FileNotFoundError:
-            log.printError(f"Code file not found \033[34m{code_file}\033[0m", 2)
+            log.printError(f"Code file not found {set_color('blue')}{code_file}{set_color(0)}", 2)
 
         try:
-            log.printInfo(f"Loading input file \033[32m{input_file}\033[0m...")
+            log.printInfo(f"Loading input file {set_color('green')}{input_file}{set_color(0)}...")
             with open(input_file, "r") as f:
                 inp = f.read()
-            log.printInfo(f"Input file successfully loaded \033[32m{input_file}\033[0m")
+            log.printInfo(f"Input file successfully loaded {set_color('green')}{input_file}{set_color(0)}")
         except FileNotFoundError:
-            log.printError(f"Cannot found input file \033[32m{input_file}\033[0m", 3)
-            for c in code:
-                if c not in readable_chars:
-                    log.printWarning(
-                        f"Found unreadable char \033[31m{c}\033[0m in code, it will be ignored."
-                    )
+            log.printError(f"Cannot found input file {set_color('green')}{input_file}{set_color(0)}", 3)
+        for c in code:
+            if c not in readable_chars:
+                log.printWarning(
+                    f"Found unreadable char {set_color('red')}{c}{set_color(0)} in code, it will be ignored."
+                )
         splitted_code = code.split("\n")
         height = len(splitted_code)
         width = max([len(l) for l in splitted_code])
@@ -261,7 +262,7 @@ while True:
         while True:
             reason = p.ni(1)
             if reason:
-                log.printInfo(f"Process exited with reason: {reason}")
+                log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
                 p = None
                 break
     elif cmd == "exit" or cmd == "quit":
