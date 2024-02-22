@@ -2,7 +2,7 @@ import sys
 import logmaster as log
 import help
 
-version = "0.0.1"
+version = "24.02.22"
 log.printInfo("Beamdbg v" + version)
 if len(sys.argv) != 4:
     log.printError(f"Usage: {sys.argv[0]} <code file> <input file> <output file>", 1)
@@ -11,9 +11,6 @@ code_file = sys.argv[1]
 input_file = sys.argv[2]
 output_file = sys.argv[3]
 
-output_fp = open(output_file, "w")
-
-
 def show_code(x=None, y=None):
     if x == None and y == None:
         print(code)
@@ -21,12 +18,10 @@ def show_code(x=None, y=None):
         print(code[y][x])
         return code[y][x]
 
-
 RIGHT = 0
 LEFT = 1
 UP = 2
 DOWN = 3
-
 
 class Process:
     def __init__(self, code, input, height, width):
@@ -63,12 +58,16 @@ class Process:
         elif c == "@":
             # sys.stdout.write(chr(self.beam))
             print("Received output :", chr(self.beam))
+            output_fp = open(output_file, "a")
             output_fp.write(chr(self.beam))
+            output_fp.close()
             self.output += chr(self.beam)
         elif c == ":":
             # sys.stdout.write(str(self.beam))
             print("Received output :", str(self.beam))
+            output_fp = open(output_file, "a")
             output_fp.write(str(self.beam))
+            output_fp.close()
             self.output += str(self.beam)
         elif c == "/":
             if self.current_direction == RIGHT:
@@ -121,7 +120,6 @@ class Process:
         elif c == "H":
             self.halted = True
             self.reason = "OK"
-            print("Output :", self.output)
         elif c == "S":
             self.store = self.beam
         elif c == "L":
@@ -164,33 +162,31 @@ class Process:
                 self.index_x += 1
                 if self.index_x >= self.width:
                     self.halted = True
-                    print("Output :", self.output)
                     self.reason = "Beam was out of range"
             elif self.current_direction == LEFT:
                 self.index_x -= 1
                 if self.index_x < 0:
                     self.halted = True
-                    print("Output :", self.output)
                     self.reason = "Beam was out of range"
             elif self.current_direction == UP:
                 self.index_y -= 1
                 if self.index_y < 0:
                     self.halted = True
-                    print("Output :", self.output)
                     self.reason = "Beam was out of range"
             elif self.current_direction == DOWN:
                 self.index_y += 1
                 if self.index_y >= self.height:
                     self.halted = True
-                    print("Output :", self.output)
                     self.reason = "Beam was out of range"
 
-
-prefix = "beamdbg> "
 log.printInfo('For help, type "help".')
 p = None
 
 while True:
+    if p:
+        prefix = "\033[92mbeamdbg> \033[0m"
+    else:
+        prefix = "\033[91mbeamdbg> \033[0m"
     cmd = input(prefix)
     if cmd == "":
         cmd = prev
@@ -211,10 +207,16 @@ while True:
             log.printWarning("Process not found")
             continue
         if not param:
-            p.ni(1)
+            reason = p.ni(1)
+            if reason:
+                log.printInfo(f"Process exited with reason: {reason}")
+                p = None
         else:
             try:
-                p.ni(int(param[0]))
+                reason = p.ni(int(param[0]))
+                if reason:
+                    log.printInfo(f"Process exited with reason: {reason}")
+                    p = None
             except ValueError:
                 log.printWarning("ValueError")
                 log.printWarning("Usage: ni <int>")
@@ -248,10 +250,20 @@ while True:
         width = max([len(l) for l in splitted_code])
         log.printInfo(f"Code height: {height}")
         log.printInfo(f"Code width: {width}")
+        output_fp = open(output_file, "w")
+        output_fp.close()
         p = Process(splitted_code, inp, height, width)
         print()
     elif cmd == "run":
-        continue
+        if not p:
+            log.printWarning("Process not found")
+            continue
+        while True:
+            reason = p.ni(1)
+            if reason:
+                log.printInfo(f"Process exited with reason: {reason}")
+                p = None
+                break
     elif cmd == "exit" or cmd == "quit":
         exit(0)
     else:
