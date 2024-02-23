@@ -54,6 +54,7 @@ DOWN = 3
 
 class Process:
     def __init__(self, code, input, height, width):
+        self.breakpoint = []
         self.modified_memory_index = []
         self.index_x = 0
         self.index_y = 0
@@ -69,6 +70,7 @@ class Process:
         self.halted = False
         self.reason = ""
         self.output = ""
+        self.interrupted = False
 
     def show_status(self):
         show_code(self.index_x, self.index_y)
@@ -250,7 +252,18 @@ while True:
     if cmd == "help":
         print(help.help_msg)
     elif cmd == "b":
-        continue
+        if not p:
+            log.printWarning("Process not found")
+            continue
+        if len(param) != 2:
+            log.printWarning("Usage: b [x] [y]")
+        else:
+            try:
+                p.breakpoint.append([int(param[0]), int(param[1])])
+                log.printInfo(f"Added breakpoint at [{param[0]}, {param[1]}]")
+            except ValueError:
+                log.printWarning("ValueError")
+                log.printWarning("Usage: b [x] [y]")
     elif cmd == "ni":
         if not p:
             log.printWarning("Process not found")
@@ -276,7 +289,7 @@ while True:
                     p.show_status()
             except ValueError:
                 log.printWarning("ValueError")
-                log.printWarning("Usage: ni <int>")
+                log.printWarning("Usage: ni <steps>")
                 continue
         
     elif cmd == "start":
@@ -330,7 +343,22 @@ while True:
         if not p:
             log.printWarning("Process not found")
             continue
+        if p.interrupted:
+            p.interrupted = False
+            reason = p.ni(1)
+            if reason:
+                log.printInfo(
+                    f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
+                )
+                p = None
+
         while True:
+            for i in range(len(p.breakpoint)):
+                if p.breakpoint[i][0] == p.index_x and p.breakpoint[i][1] == p.index_y:
+                    log.printInfo(f"Got breakpoint {i} {p.breakpoint[i]}")
+                    p.show_status()
+                    p.interrupted = True
+            if p.interrupted: break
             reason = p.ni(1)
             if reason:
                 log.printInfo(
