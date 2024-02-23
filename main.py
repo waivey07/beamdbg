@@ -71,6 +71,12 @@ class Process:
         self.output = ""
         show_code(self.index_x, self.index_y)
 
+    def show_code(self):
+        show_code(self.index_x, self.index_y)
+        print(f"Current index : {self.index_x}, {self.index_y}")
+        print(f"Current value of 'Beam' : {self.beam}")
+        print(f"Current value of 'Store' : {self.store}")
+        
     def interpret(self, c):
         if self.halted:
             return self.reason
@@ -79,10 +85,10 @@ class Process:
             if self.memory[i] != 0:
                 self.modified_memory_index.append(i)
         self.modified_memory_index = list(sorted(set(self.modified_memory_index)))
-        show_code(self.index_x, self.index_y)
-        print(f"Current index : {p.index_x}, {p.index_y}")
-        print(f"Current value of 'Beam' : {p.beam}")
-        print(f"Current value of 'Store' : {p.store}")
+        # show_code(self.index_x, self.index_y)
+        # print(f"Current index : {p.index_x}, {p.index_y}")
+        # print(f"Current value of 'Beam' : {p.beam}")
+        # print(f"Current value of 'Store' : {p.store}")
         if c == ">":
             self.current_direction = RIGHT
         elif c == "<":
@@ -250,6 +256,7 @@ while True:
         if not p:
             log.printWarning("Process not found")
             continue
+        p.show_code()
         if not param:
             reason = p.ni(1)
             if reason:
@@ -314,6 +321,7 @@ while True:
         output_fp = open(output_file, "w")
         output_fp.close()
         p = Process(splitted_code, inp, height, width)
+        p.show_code()
         print()
     elif cmd == "run":
         if not p:
