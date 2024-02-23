@@ -3,7 +3,7 @@ import modules.logmaster as log
 import modules.help as help
 from modules.colormaster import set_color
 
-version = "24.02.22"
+version = "24.02.23"
 log.printInfo("Beamdbg v" + version)
 if len(sys.argv) != 4:
     log.printError(f"Usage: {sys.argv[0]} <code file> <input file> <output file>", 1)
@@ -24,12 +24,17 @@ def show_code(x=None, y=None):
                     print(f"{splitted_code[i][j]}", end='')
             print()
 
-def check_memory(memory):
-    idx=[]
-    for i in memory:
-        if memory!=-1:
-            idx.append(i)
-    return idx
+def show_memory(modified_memory_index, memory, beam, store):
+    for i in modified_memory_index:
+        if int(i)==beam:
+            print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}")
+            continue
+        elif int(i)==store:
+            print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}")
+            continue
+        else:
+            print(f"Memory[{i}] : {memory[i]}")
+            continue
 
 RIGHT = 0
 LEFT = 1
@@ -37,6 +42,7 @@ UP = 2
 DOWN = 3
 class Process:
     def __init__(self, code, input, height, width):
+        self.modified_memory_index=[]
         self.index_x = 0
         self.index_y = 0
         self.current_direction = RIGHT
@@ -51,10 +57,20 @@ class Process:
         self.halted = False
         self.reason = ""
         self.output = ""
+        show_code(self.index_x, self.index_y)
 
     def interpret(self, c):
         if self.halted:
             return self.reason
+        
+        for i in range(256):
+            if self.memory[i] != 0:
+                self.modified_memory_index.append(i)
+        self.modified_memory_index=list(sorted(set(self.modified_memory_index)))
+        show_code(self.index_x, self.index_y)
+        print(f"Current index : {p.index_x}, {p.index_y}")
+        print(f"Current value of 'Beam' : {p.beam}")
+        print(f"Current value of 'Store' : {p.store}")
         if c == ">":
             self.current_direction = RIGHT
         elif c == "<":
@@ -68,14 +84,12 @@ class Process:
         elif c == "-":
             self.beam -= 1
         elif c == "@":
-            # sys.stdout.write(chr(self.beam))
             log.printInfo(f"Received output : {chr(self.beam)}")
             output_fp = open(output_file, "a")
             output_fp.write(chr(self.beam))
             output_fp.close()
             self.output += chr(self.beam)
         elif c == ":":
-            # sys.stdout.write(str(self.beam))
             log.printInfo(f"Received output : {str(self.beam)}")
             output_fp = open(output_file, "a")
             output_fp.write(str(self.beam))
@@ -197,10 +211,10 @@ p = None
 while True:
     if p:
         prefix = f"{set_color('green', 1)}beamdbg> {set_color(0)}"
-        show_code(p.index_x, p.index_y)
-        print(f"Current index : {p.index_x}, {p.index_y}")
-        print(f"Current value of 'Beam' : {p.beam}")
-        print(f"Current value of 'Store' : {p.store}")
+        # show_code(p.index_x, p.index_y)
+        # print(f"Current index : {p.index_x}, {p.index_y}")
+        # print(f"Current value of 'Beam' : {p.beam}")
+        # print(f"Current value of 'Store' : {p.store}")
     else:
         prefix = f"{set_color('red', 1)}beamdbg> {set_color(0)}"
     cmd = input(prefix)
@@ -280,6 +294,12 @@ while True:
                 log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
                 p = None
                 break
+    elif cmd == "mem":
+        if not p:
+            log.printWarning("Process not found")
+            continue
+        else:
+            show_memory(p.modified_memory_index, p.memory, p.beam, p.store)
     elif cmd == "stop":
         p=None
     elif cmd == "exit" or cmd == "quit":
