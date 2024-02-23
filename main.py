@@ -12,6 +12,7 @@ code_file = sys.argv[1]
 input_file = sys.argv[2]
 output_file = sys.argv[3]
 
+
 def show_code(x=None, y=None):
     if x == None and y == None:
         print(code)
@@ -19,30 +20,41 @@ def show_code(x=None, y=None):
         for i in range(len(splitted_code)):
             for j in range(len(splitted_code[i])):
                 if i == y and j == x:
-                    print(f"{set_color('red', isBackground = 1)}{splitted_code[i][j]}{set_color(0)}", end='')
+                    print(
+                        f"{set_color('red', isBackground = 1)}{splitted_code[i][j]}{set_color(0)}",
+                        end="",
+                    )
                 else:
-                    print(f"{splitted_code[i][j]}", end='')
+                    print(f"{splitted_code[i][j]}", end="")
             print()
+
 
 def show_memory(modified_memory_index, memory, beam, store):
     for i in modified_memory_index:
-        if int(i)==beam:
-            print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}")
+        if int(i) == beam:
+            print(
+                f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}"
+            )
             continue
-        elif int(i)==store:
-            print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}")
+        elif int(i) == store:
+            print(
+                f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}"
+            )
             continue
         else:
             print(f"Memory[{i}] : {memory[i]}")
             continue
 
+
 RIGHT = 0
 LEFT = 1
 UP = 2
 DOWN = 3
+
+
 class Process:
     def __init__(self, code, input, height, width):
-        self.modified_memory_index=[]
+        self.modified_memory_index = []
         self.index_x = 0
         self.index_y = 0
         self.current_direction = RIGHT
@@ -62,11 +74,11 @@ class Process:
     def interpret(self, c):
         if self.halted:
             return self.reason
-        
+
         for i in range(256):
             if self.memory[i] != 0:
                 self.modified_memory_index.append(i)
-        self.modified_memory_index=list(sorted(set(self.modified_memory_index)))
+        self.modified_memory_index = list(sorted(set(self.modified_memory_index)))
         show_code(self.index_x, self.index_y)
         print(f"Current index : {p.index_x}, {p.index_y}")
         print(f"Current value of 'Beam' : {p.beam}")
@@ -176,7 +188,8 @@ class Process:
                 self.current_direction = RIGHT
         elif c == "r":
             self.beam = ord(self.input[self.input_idx])
-            if self.beam == 10: self.beam = 0
+            if self.beam == 10:
+                self.beam = 0
             self.input_idx += 1
 
     def ni(self, count):
@@ -204,6 +217,7 @@ class Process:
                 if self.index_y >= self.height:
                     self.halted = True
                     self.reason = "Beam was out of range"
+
 
 log.printInfo('For help, type "help".')
 p = None
@@ -239,13 +253,17 @@ while True:
         if not param:
             reason = p.ni(1)
             if reason:
-                log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
+                log.printInfo(
+                    f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
+                )
                 p = None
         else:
             try:
                 reason = p.ni(int(param[0]))
                 if reason:
-                    log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
+                    log.printInfo(
+                        f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
+                    )
                     p = None
             except ValueError:
                 log.printWarning("ValueError")
@@ -256,20 +274,33 @@ while True:
         log.printInfo("Starting to debug...")
         readable_chars = "><^v+-@:/\\!?|_HSLsgPpun`')(r\n "
         try:
-            log.printInfo(f"Loading code file {set_color('blue')}{code_file}{set_color(0)}...")
+            log.printInfo(
+                f"Loading code file {set_color('blue')}{code_file}{set_color(0)}..."
+            )
             with open(code_file, "r") as f:
                 code = f.read()
-            log.printInfo(f"Code file successfully loaded {set_color('blue')}{code_file}{set_color(0)}")
+            log.printInfo(
+                f"Code file successfully loaded {set_color('blue')}{code_file}{set_color(0)}"
+            )
         except FileNotFoundError:
-            log.printError(f"Code file not found {set_color('blue')}{code_file}{set_color(0)}", 2)
+            log.printError(
+                f"Code file not found {set_color('blue')}{code_file}{set_color(0)}", 2
+            )
 
         try:
-            log.printInfo(f"Loading input file {set_color('green')}{input_file}{set_color(0)}...")
+            log.printInfo(
+                f"Loading input file {set_color('green')}{input_file}{set_color(0)}..."
+            )
             with open(input_file, "r") as f:
                 inp = f.read()
-            log.printInfo(f"Input file successfully loaded {set_color('green')}{input_file}{set_color(0)}")
+            log.printInfo(
+                f"Input file successfully loaded {set_color('green')}{input_file}{set_color(0)}"
+            )
         except FileNotFoundError:
-            log.printError(f"Cannot found input file {set_color('green')}{input_file}{set_color(0)}", 3)
+            log.printError(
+                f"Cannot found input file {set_color('green')}{input_file}{set_color(0)}",
+                3,
+            )
         for c in code:
             if c not in readable_chars:
                 log.printWarning(
@@ -291,7 +322,9 @@ while True:
         while True:
             reason = p.ni(1)
             if reason:
-                log.printInfo(f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}")
+                log.printInfo(
+                    f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
+                )
                 p = None
                 break
     elif cmd == "mem":
@@ -301,7 +334,7 @@ while True:
         else:
             show_memory(p.modified_memory_index, p.memory, p.beam, p.store)
     elif cmd == "stop":
-        p=None
+        p = None
     elif cmd == "exit" or cmd == "quit":
         exit(0)
     else:
