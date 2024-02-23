@@ -28,21 +28,32 @@ def show_code(x=None, y=None):
                     print(f"{splitted_code[i][j]}", end="")
             print()
 
+def check_ascii(c):
+    return (c >= 0x20 and c <= 0x7f)
 
 def show_memory(modified_memory_index, memory, beam, store):
     for i in modified_memory_index:
         if int(i) == beam:
-            print(
-                f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}"
-            )
+            if check_ascii(memory[i]):
+                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}   <{character}>" )
+            else:
+                print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}")
+            
             continue
         elif int(i) == store:
-            print(
-                f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}"
-            )
+            if check_ascii(memory[i]):
+                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}   <{character}>" )
+            else:
+                print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}")
             continue
         else:
-            print(f"Memory[{i}] : {memory[i]}")
+            if check_ascii(memory[i]):
+                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                print(f"Memory[{i}] : {memory[i]}   <{character}>" )
+            else:
+                print(f"Memory[{i}] : {memory[i]}")
             continue
 
 
