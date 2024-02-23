@@ -1,4 +1,4 @@
-from colormaster import set_color
+from modules.colormaster import set_color
 def printInfo(msg: str):
     print(f"[{set_color('blue')}*{set_color(0)}] " + msg)
 

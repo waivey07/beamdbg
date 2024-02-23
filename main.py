@@ -1,7 +1,7 @@
 import sys
-import logmaster as log
-import help
-from colormaster import set_color
+import modules.logmaster as log
+import modules.help as help
+from modules.colormaster import set_color
 
 version = "24.02.22"
 log.printInfo("Beamdbg v" + version)
