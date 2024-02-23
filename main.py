@@ -16,8 +16,13 @@ def show_code(x=None, y=None):
     if x == None and y == None:
         print(code)
     else:
-        print(code[y][x])
-        return code[y][x]
+        for i in range(len(splitted_code)):
+            for j in range(len(splitted_code[i])):
+                if i == y and j == x:
+                    print(f"{set_color('red', isBackground = 1)}{splitted_code[i][j]}{set_color(0)}", end='')
+                else:
+                    print(f"{splitted_code[i][j]}", end='')
+            print()
 
 def check_memory(memory):
     idx=[]
@@ -162,9 +167,6 @@ class Process:
 
     def ni(self, count):
         for i in range(count):
-            print(f"Current index : {self.index_x}, {self.index_y}")
-            print(f"Current value of 'Beam' : {self.beam}")
-            print(f"Current value of 'Store' : {self.store}")
             self.interpret(self.code[self.index_y][self.index_x])
             if self.halted:
                 return self.reason
@@ -195,6 +197,10 @@ p = None
 while True:
     if p:
         prefix = f"{set_color('green', 1)}beamdbg> {set_color(0)}"
+        show_code(p.index_x, p.index_y)
+        print(f"Current index : {p.index_x}, {p.index_y}")
+        print(f"Current value of 'Beam' : {p.beam}")
+        print(f"Current value of 'Store' : {p.store}")
     else:
         prefix = f"{set_color('red', 1)}beamdbg> {set_color(0)}"
     cmd = input(prefix)
