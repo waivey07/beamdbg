@@ -69,9 +69,8 @@ class Process:
         self.halted = False
         self.reason = ""
         self.output = ""
-        show_code(self.index_x, self.index_y)
 
-    def show_code(self):
+    def show_status(self):
         show_code(self.index_x, self.index_y)
         print(f"Current index : {self.index_x}, {self.index_y}")
         print(f"Current value of 'Beam' : {self.beam}")
@@ -256,7 +255,6 @@ while True:
         if not p:
             log.printWarning("Process not found")
             continue
-        p.show_code()
         if not param:
             reason = p.ni(1)
             if reason:
@@ -264,6 +262,8 @@ while True:
                     f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
                 )
                 p = None
+            else:
+                p.show_status()
         else:
             try:
                 reason = p.ni(int(param[0]))
@@ -272,10 +272,13 @@ while True:
                         f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
                     )
                     p = None
+                else:
+                    p.show_status()
             except ValueError:
                 log.printWarning("ValueError")
                 log.printWarning("Usage: ni <int>")
                 continue
+        
     elif cmd == "start":
         print()
         log.printInfo("Starting to debug...")
@@ -321,7 +324,7 @@ while True:
         output_fp = open(output_file, "w")
         output_fp.close()
         p = Process(splitted_code, inp, height, width)
-        p.show_code()
+        p.show_status()
         print()
     elif cmd == "run":
         if not p:

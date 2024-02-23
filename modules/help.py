@@ -11,5 +11,5 @@ stop - Stop the process
 ni <steps> - Executes the next instruction a specified number of times, default=1
 run - Run process until exit
 b - Set breakpoint
-exit - Exit program
+exit/quit - Exit program
 """
