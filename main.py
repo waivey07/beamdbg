@@ -28,30 +28,46 @@ def show_code(x=None, y=None):
                     print(f"{splitted_code[i][j]}", end="")
             print()
 
+
 def check_ascii(c):
-    return (c >= 0x20 and c <= 0x7f)
+    return c >= 0x20 and c <= 0x7F
+
 
 def show_memory(modified_memory_index, memory, beam, store):
     for i in modified_memory_index:
         if int(i) == beam:
             if check_ascii(memory[i]):
-                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
-                print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}   <{character}>" )
+                character = (
+                    f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                )
+                print(
+                    f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}   <{character}>"
+                )
             else:
-                print(f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}")
-            
+                print(
+                    f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} : {memory[i]}"
+                )
+
             continue
         elif int(i) == store:
             if check_ascii(memory[i]):
-                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
-                print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}   <{character}>" )
+                character = (
+                    f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                )
+                print(
+                    f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}   <{character}>"
+                )
             else:
-                print(f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}")
+                print(
+                    f"Memory[{i}] {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}"
+                )
             continue
         else:
             if check_ascii(memory[i]):
-                character=f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
-                print(f"Memory[{i}] : {memory[i]}   <{character}>" )
+                character = (
+                    f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                )
+                print(f"Memory[{i}] : {memory[i]}   <{character}>")
             else:
                 print(f"Memory[{i}] : {memory[i]}")
             continue
@@ -86,9 +102,21 @@ class Process:
     def show_status(self):
         show_code(self.index_x, self.index_y)
         print(f"Current index : {self.index_x}, {self.index_y}")
-        print(f"Current value of 'Beam' : {self.beam}")
-        print(f"Current value of 'Store' : {self.store}")
-        
+        if check_ascii(self.beam):
+            character = (
+                f"{set_color('yellow',isBright=1)}{chr(self.beam)}{set_color(0)}"
+            )
+            print(f"Current value of 'Beam' : {self.beam}   <{character}>")
+        else:
+            print(f"Current value of 'Beam' : {self.beam}")
+        if check_ascii(self.store):
+            character = (
+                f"{set_color('yellow',isBright=1)}{chr(self.store)}{set_color(0)}"
+            )
+            print(f"Current value of 'Store' : {self.store}   <{character}>")
+        else:
+            print(f"Current value of 'Store' : {self.store}")
+
     def interpret(self, c):
         if self.halted:
             return self.reason
@@ -302,7 +330,7 @@ while True:
                 log.printWarning("ValueError")
                 log.printWarning("Usage: ni <steps>")
                 continue
-        
+
     elif cmd == "start":
         print()
         log.printInfo("Starting to debug...")
@@ -369,7 +397,8 @@ while True:
                     log.printInfo(f"Got breakpoint {i} {p.breakpoint[i]}")
                     p.show_status()
                     p.interrupted = True
-            if p.interrupted: break
+            if p.interrupted:
+                break
             reason = p.ni(1)
             if reason:
                 log.printInfo(
