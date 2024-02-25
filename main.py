@@ -35,7 +35,20 @@ def check_ascii(c):
 
 def show_memory(modified_memory_index, memory, beam, store):
     for i in modified_memory_index:
-        if int(i) == beam:
+        if int(i) == store and int(i) == beam:
+            if check_ascii(memory[i]):
+                character = (
+                    f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
+                )
+                print(
+                    f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}   <{character}>"
+                )
+            else:
+                print(
+                    f"Memory[{i}] {set_color('magenta', isBright=1, isBackground = 1)}(Beam){set_color(0)} {set_color('cyan', isBright=1, isBackground = 1)}(Store){set_color(0)} : {memory[i]}"
+                )
+            continue
+        elif int(i) == beam:
             if check_ascii(memory[i]):
                 character = (
                     f"{set_color('yellow',isBright=1)}{chr(memory[i])}{set_color(0)}"
@@ -121,10 +134,6 @@ class Process:
         if self.halted:
             return self.reason
 
-        for i in range(256):
-            if self.memory[i] != 0:
-                self.modified_memory_index.append(i)
-        self.modified_memory_index = list(sorted(set(self.modified_memory_index)))
         # show_code(self.index_x, self.index_y)
         # print(f"Current index : {p.index_x}, {p.index_y}")
         # print(f"Current value of 'Beam' : {p.beam}")
@@ -237,6 +246,10 @@ class Process:
             if self.beam == 10:
                 self.beam = 0
             self.input_idx += 1
+        for i in range(256):
+            if self.memory[i] != 0:
+                self.modified_memory_index.append(i)
+        self.modified_memory_index = list(sorted(set(self.modified_memory_index)))
     def run(self, count = None):
         self.interrupted = False
         if not count:
