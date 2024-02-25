@@ -237,32 +237,73 @@ class Process:
             if self.beam == 10:
                 self.beam = 0
             self.input_idx += 1
-
-    def ni(self, count):
-        for i in range(count):
-            self.interpret(self.code[self.index_y][self.index_x])
-            if self.halted:
-                return self.reason
-            if self.current_direction == RIGHT:
-                self.index_x += 1
-                if self.index_x >= self.width:
-                    self.halted = True
-                    self.reason = "Beam was out of range"
-            elif self.current_direction == LEFT:
-                self.index_x -= 1
-                if self.index_x < 0:
-                    self.halted = True
-                    self.reason = "Beam was out of range"
-            elif self.current_direction == UP:
-                self.index_y -= 1
-                if self.index_y < 0:
-                    self.halted = True
-                    self.reason = "Beam was out of range"
-            elif self.current_direction == DOWN:
-                self.index_y += 1
-                if self.index_y >= self.height:
-                    self.halted = True
-                    self.reason = "Beam was out of range"
+    def run(self, count = None):
+        self.interrupted = False
+        if not count:
+            while True:
+                for i in range(len(self.breakpoint)):
+                    if self.breakpoint[i][0] == self.index_x and self.breakpoint[i][1] == self.index_y:
+                        log.printInfo(f"Got breakpoint {i} {self.breakpoint[i]}")
+                        self.show_status()
+                        self.breakpoint.remove(self.breakpoint[i])
+                        self.interrupted = True
+                if self.interrupted:
+                    break
+                self.interpret(self.code[self.index_y][self.index_x])
+                if self.halted:
+                    return self.reason
+                if self.current_direction == RIGHT:
+                    self.index_x += 1
+                    if self.index_x >= self.width:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == LEFT:
+                    self.index_x -= 1
+                    if self.index_x < 0:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == UP:
+                    self.index_y -= 1
+                    if self.index_y < 0:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == DOWN:
+                    self.index_y += 1
+                    if self.index_y >= self.height:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+        else:
+            for _ in range(count):
+                for i in range(len(self.breakpoint)):
+                    if self.breakpoint[i][0] == self.index_x and self.breakpoint[i][1] == self.index_y:
+                        log.printInfo(f"Got breakpoint {i} {self.breakpoint[i]}")
+                        self.show_status()
+                        self.interrupted = True
+                if self.interrupted:
+                    break
+                self.interpret(self.code[self.index_y][self.index_x])
+                if self.halted:
+                    return self.reason
+                if self.current_direction == RIGHT:
+                    self.index_x += 1
+                    if self.index_x >= self.width:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == LEFT:
+                    self.index_x -= 1
+                    if self.index_x < 0:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == UP:
+                    self.index_y -= 1
+                    if self.index_y < 0:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
+                elif self.current_direction == DOWN:
+                    self.index_y += 1
+                    if self.index_y >= self.height:
+                        self.halted = True
+                        self.reason = "Beam was out of range"
 
 
 log.printInfo('For help, type "help".')
@@ -308,7 +349,7 @@ while True:
             log.printWarning("Process not found")
             continue
         if not param:
-            reason = p.ni(1)
+            reason = p.run(1)
             if reason:
                 log.printInfo(
                     f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
@@ -318,7 +359,7 @@ while True:
                 p.show_status()
         else:
             try:
-                reason = p.ni(int(param[0]))
+                reason = p.run(int(param[0]))
                 if reason:
                     log.printInfo(
                         f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
@@ -382,30 +423,12 @@ while True:
         if not p:
             log.printWarning("Process not found")
             continue
-        if p.interrupted:
-            p.interrupted = False
-            reason = p.ni(1)
-            if reason:
-                log.printInfo(
-                    f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
-                )
-                p = None
-
-        while True:
-            for i in range(len(p.breakpoint)):
-                if p.breakpoint[i][0] == p.index_x and p.breakpoint[i][1] == p.index_y:
-                    log.printInfo(f"Got breakpoint {i} {p.breakpoint[i]}")
-                    p.show_status()
-                    p.interrupted = True
-            if p.interrupted:
-                break
-            reason = p.ni(1)
-            if reason:
-                log.printInfo(
-                    f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
-                )
-                p = None
-                break
+        reason = p.run()
+        if reason:
+            log.printInfo(
+                f"Process exited with reason: {set_color('yellow')}{reason}{set_color(0)}"
+            )
+            p = None
     elif cmd == "mem":
         if not p:
             log.printWarning("Process not found")
