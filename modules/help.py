@@ -10,6 +10,7 @@ start - Start the process
 stop - Stop the process
 ni <steps> - Executes the next instruction a specified number of times, default=1
 run - Run process until exit
+mem - Shows memory
 b - Set breakpoint
 exit/quit - Exit program
 """
