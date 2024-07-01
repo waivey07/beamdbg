@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
+
 import sys
 import modules.logmaster as log
 import modules.help as help
 from modules.colormaster import set_color
 
-version = "24.02.23"
+version = "24.07.01"
 log.printInfo("Beamdbg v" + version)
 if len(sys.argv) != 4:
     log.printError(f"Usage: {sys.argv[0]} <code file> <input file> <output file>", 1)
