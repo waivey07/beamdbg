@@ -14,12 +14,13 @@ Beam 프로그래밍에 대한 이해가 부족하시다면,
 cd ~
 git clone https://github.com/h0pler/beamdbg.git
 cd beamdbg
+./setup.sh
 ```  
 
 ### 실행 방법
 *코드 파일*, *입력 파일*, *출력 파일*을 먼저 생성하신 후 진행하셔야 합니다.  
 입력과 출력이 따로 없는 코드여도, 꼭 생성 후 실행하셔야 합니다.  
-`python main.py <code> <input> <output>`  
+`beamdbg <code> <input> <output>`  
 ### 명령어
 - **start** : code, input 파일을 읽어와 Beam 프로세스를 시작합니다.
 - **ni \<steps\>** : Next Instruction의 축약어로, `steps`가 제공되지 않았다면 1만큼, 제공되었다면 `steps`만큼 실행합니다. 실행 중 breakpoint를 만날 경우 실행이 중단됩니다.
